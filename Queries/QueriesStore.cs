@@ -62,7 +62,7 @@ namespace Queries
             //Query6. A string sequence is given.
             //Get a string consisting of the initial characters of all strings in the source sequence.
 
-            var initialCharactersSum = str.Select(s => s[0]);
+            var initialCharactersSum = str.Where(s => !string.IsNullOrEmpty(s)).Select(s => s[0]);
             return new string(initialCharactersSum.ToArray());
         }
 
@@ -99,9 +99,9 @@ namespace Queries
             //greater D (not including it), and the second - all elements, starting from the element with the ordinal number K.
             //Sort the resulting sequence (not containing identical elements) in descending order.
 
-            List<int> firstFragment = a.TakeWhile(x => x < d).ToList();
-            List<int> secondFragment = a.Skip(k - 1).ToList();
-            List<int> union = firstFragment.Union(secondFragment).OrderByDescending(x => x).ToList();
+            var firstFragment = a.TakeWhile(x => x.CompareTo(d) < 1).ToList();
+            var secondFragment = a.Skip(k - 1).ToList();
+            var union = firstFragment.Union(secondFragment).OrderByDescending(x => x).ToList();
             return union;
         }
 
@@ -113,7 +113,6 @@ namespace Queries
             var oddNumbers = n.Where(x => x % 2 != 0).Select(x => x.ToString());
             var sortedOddNumbers = oddNumbers.OrderBy(x => x);
             return sortedOddNumbers;
-            
         }
 
         public static IEnumerable<char> Query11(IEnumerable<string> str)
@@ -124,7 +123,9 @@ namespace Queries
             //character the first character of this string is taken; otherwise, the last character of the string is taken.
             //Sort the received characters in descending order of their codes.
 
-            throw new NotImplementedException();
+            var chars = str.Select(s => s.Length % 2 == 1 ? s[0] : s[s.Length - 1]);
+            var sortedChars = chars.OrderByDescending(x => (int)x);
+            return sortedChars;
         }
 
         public static IEnumerable<int> Query12(int k1, int k2, IEnumerable<int> a, IEnumerable<int> b)
@@ -133,7 +134,8 @@ namespace Queries
             //Get a sequence containing all numbers from A greater than K1 and all numbers from B less than K2.
             //Sort the resulting sequence in ascending order.
 
-            throw new NotImplementedException();
+            var result = a.Where(x => x > k1).Concat(b.Where(x => x < k2));
+            return result.OrderBy(x => x);
         }
 
         public static IEnumerable<string> Query13(IEnumerable<int> a, IEnumerable<int> b)
