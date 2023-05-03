@@ -86,7 +86,10 @@ namespace Queries
             //Sequence strings contain only numbers and capital letters of the Latin alphabet.
             //Extract from A all strings of length K that end in a digit, sorting them in an ascending order.
 
-            throw new NotImplementedException();
+            var result = a.Where(s => s.Length == k && char.IsDigit(s.Last()))
+                          .OrderBy(s => s)
+                          .ToList();
+            return result;
         }
 
         public static IEnumerable<int> Query9(int d, int k, IEnumerable<int> a)
@@ -96,7 +99,10 @@ namespace Queries
             //greater D (not including it), and the second - all elements, starting from the element with the ordinal number K.
             //Sort the resulting sequence (not containing identical elements) in descending order.
 
-            throw new NotImplementedException();
+            List<int> firstFragment = a.TakeWhile(x => x < d).ToList();
+            List<int> secondFragment = a.Skip(k - 1).ToList();
+            List<int> union = firstFragment.Union(secondFragment).OrderByDescending(x => x).ToList();
+            return union;
         }
 
         public static IEnumerable<string> Query10(IEnumerable<int> n)
@@ -104,7 +110,10 @@ namespace Queries
             //Query10. A sequence of positive integers is given.
             //Processing only odd numbers, get a sequence of their string representations and sort it in ascending order.
 
-            throw new NotImplementedException();
+            var oddNumbers = n.Where(x => x % 2 != 0).Select(x => x.ToString());
+            var sortedOddNumbers = oddNumbers.OrderBy(x => x);
+            return sortedOddNumbers;
+            
         }
 
         public static IEnumerable<char> Query11(IEnumerable<string> str)
