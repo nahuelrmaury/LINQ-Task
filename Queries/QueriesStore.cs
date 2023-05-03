@@ -24,6 +24,7 @@ namespace Queries
         {
             //There is a sequence of strings.
             //Combine all strings into one.
+
             string combinedString = str.Aggregate((x, y) => x + y);
             return combinedString;
         }
@@ -34,6 +35,7 @@ namespace Queries
             //Output the first string from A that starts with a digit and has length L.
             //If there are no required strings in the sequence A, then output the string "Not found".
             //Indication. To handle the situation associated with the absence of required rows, use the ?? operation.
+
             string result = str.FirstOrDefault(s => l > 0 && s.Length == l && char.IsDigit(s[0]));
             return result ?? "Not found";
         }
@@ -42,6 +44,7 @@ namespace Queries
         {
             //Query4. Given a C character and a string sequence A.
             //Find the number of A elements that contain more than one character, provided that these elements start and end with C.
+
             int count = str.Count(s => s.StartsWith(c) && s.EndsWith(c) && s.Length > 2);
             return count;
         }
@@ -70,7 +73,11 @@ namespace Queries
             //and the second - all numbers with ordinal numbers greater than K.
             //In the resulting sequence (not containing identical elements), reverse the order of the elements.
 
-            throw new NotImplementedException();
+            var evenNumbers = a.Where(x => x % 2 == 0);
+            var greaterThanK = a.Skip(k);
+            var result = evenNumbers.Except(greaterThanK);
+            var reversedResult = result.Reverse();
+            return reversedResult;
         }
 
         public static IEnumerable<string> Query8(int k, IEnumerable<string> a)
