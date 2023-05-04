@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,7 +46,7 @@ namespace Queries
             //Query4. Given a C character and a string sequence A.
             //Find the number of A elements that contain more than one character, provided that these elements start and end with C.
 
-            int count = str.Count(s => s.StartsWith(c) && s.EndsWith(c) && s.Length > 2);
+            int count = str.Count(s => s.StartsWith(c) && s.EndsWith(c) && s.Length > 1);
             return count;
         }
 
@@ -62,7 +63,8 @@ namespace Queries
             //Query6. A string sequence is given.
             //Get a string consisting of the initial characters of all strings in the source sequence.
 
-            var initialCharactersSum = str.Where(s => !string.IsNullOrEmpty(s)).Select(s => s[0]);
+            var initialCharactersSum = str.Where(s => !string.IsNullOrEmpty(s))
+                                          .Select(s => s[0]);
             return new string(initialCharactersSum.ToArray());
         }
 
@@ -99,9 +101,15 @@ namespace Queries
             //greater D (not including it), and the second - all elements, starting from the element with the ordinal number K.
             //Sort the resulting sequence (not containing identical elements) in descending order.
 
-            var firstFragment = a.TakeWhile(x => x.CompareTo(d) < 1).ToList();
-            var secondFragment = a.Skip(k - 1).ToList();
-            var union = firstFragment.Union(secondFragment).OrderByDescending(x => x).ToList();
+            var firstFragment = a.TakeWhile(x => x.CompareTo(d) < 1)
+                                  .ToList();
+
+            var secondFragment = a.Skip(k - 1)
+                                  .ToList();
+
+            var union = firstFragment.Union(secondFragment)
+                                     .OrderByDescending(x => x)
+                                     .ToList();
             return union;
         }
 
@@ -110,7 +118,8 @@ namespace Queries
             //Query10. A sequence of positive integers is given.
             //Processing only odd numbers, get a sequence of their string representations and sort it in ascending order.
 
-            var oddNumbers = n.Where(x => x % 2 != 0).Select(x => x.ToString());
+            var oddNumbers = n.Where(x => x % 2 != 0)
+                              .Select(x => x.ToString());
             var sortedOddNumbers = oddNumbers.OrderBy(x => x);
             return sortedOddNumbers;
         }
@@ -134,7 +143,9 @@ namespace Queries
             //Get a sequence containing all numbers from A greater than K1 and all numbers from B less than K2.
             //Sort the resulting sequence in ascending order.
 
-            var result = a.Where(x => x > k1).Concat(b.Where(x => x < k2));
+            var result = a.Where(x => x > k1)
+                          .Concat(b.Where(x => x < k2));
+
             return result.OrderBy(x => x);
         }
 
@@ -148,7 +159,18 @@ namespace Queries
             //Represent the found union as a sequence of strings containing the first and second elements of the pair,
             //separated by a hyphen, e.g. "49-129".
 
-            throw new NotImplementedException();
+            var innerUnion = from A in a
+                             join B in b on A % 10 equals B % 10
+                             select new
+                             {
+                                 firstString = A,
+                                 secondString = B
+                             };
+
+            List<string> result = innerUnion.Select(s => s.firstString + " - " + s.secondString)
+                                            .ToList();
+
+            return result;
         }
 
         public static IEnumerable<string> Query14(IEnumerable<string> a, IEnumerable<string> b)
@@ -160,7 +182,23 @@ namespace Queries
             //colon-separated, e.g. "AB: CD". The order of the pairs must be determined by the order
             //first elements of pairs (in ascending order), and for equal first elements - by the order of the second elements of pairs (in descending order).
 
-            throw new NotImplementedException();
+            var innerUnion = from A in a
+                             join B in b on A.Length equals B.Length
+                             select new
+                             {
+                                 firstString = A,
+                                 secondString = B
+                             };
+
+            var resultFormat = innerUnion.OrderBy(x => x.firstString)
+                                         .ThenByDescending(y => y.secondString)
+                                         .ToList();
+
+            List<string> result = resultFormat.Select(s => s.firstString + ":" + s.secondString)
+                                              .ToList();
+
+            return result;
+
         }
 
         public static IEnumerable<string> Query15(IEnumerable<int> a)
@@ -172,7 +210,17 @@ namespace Queries
             //Order the resulting sequence in an ascending order of keys.
             //Indication. Use the GroupBy method.
 
-            throw new NotImplementedException();
+            var groups = a.GroupBy(x => x % 10)
+                          .Select(g => new { Key = g.Key, Sum = g.Sum() })
+                          .OrderBy(x => x.Key);
+
+            List<string> result = new List<string>();
+            foreach (var group in groups)
+            {
+                result.Add($"{group.Key}: {group.Sum}");
+            }
+
+            return result;
         }
 
         public static IDictionary<uint, int> Query16(IEnumerable<Enrollee> enrollees)
@@ -182,7 +230,11 @@ namespace Queries
             //Return a dictionary, where the key is the year, the value is the number of different schools that applicants graduated from this year.
             //Order the elements of the dictionary in ascending order of the number of schools, and for matching numbers - in ascending order of the year number.
 
-            throw new NotImplementedException();
+            var result = enrollees.GroupBy(x => x.YearGraduate)
+                                  .Select(y => new { Date = y.Key, Count = y.Distinct().Count() })
+                                  .ToDictionary(a => a.Date, b => b.Count);
+
+            return result;
         }
     }
 }
